@@ -40,19 +40,22 @@ const resolvers ={
             return { token, user };
           },
 
-         saveBook: async(parent, bookData, context) =>{
+         saveBook: async(parent, {bookData}, context) =>{
+             console.log(context.user)
              if(context.user){
                  const updatedUser = await User.findOneAndUpdate(
                      {
                          _id: context.user._id
                      },
-                     {$push: {savedBooks: bookData}},
+                     {$addToSet: {savedBooks:{ ...bookData}}},
                      {new: true}
                  )
                  console.log(updatedUser);
                  return updatedUser;
              }
-             throw new AuthenticationError('notLoggedIn');
+             
+             console.log(context.user)
+             throw new AuthenticationError('error with saved book function');
          },
          
          RemoveBook: async(parent, {bookId}, context) =>{
